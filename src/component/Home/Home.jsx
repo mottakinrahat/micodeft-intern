@@ -3,20 +3,37 @@ import SingleCard from '../SingleCard/SingleCard';
 import Form from '../Form/Form';
 
 const Home = () => {
-    const [productData, setProductData] = useState([])
-
     useEffect(() => {
         fetch('https://dummyjson.com/products')
             .then(res => res.json())
             .then(data => setProductData(data.products));
     }, [])
+   
+    const [productData, setProductData] = useState([])
+    const [searchTerm,setSearchTerm] = useState('');
+   
+    const filteredProducts = productData.filter((prod) => {
+        console.log(prod);
+        return prod.title.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+    const handleSearch=(event) => {
+       setSearchTerm(event.target.value);
+    }
 
     console.log(productData);
     return (
+      <>
+     <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          placeholder="Search by toy name"
+          className="input input-bordered"
+        />
         <div className='flex justify-center '>
             <div className='grid grid-cols-2 mx-6 gap-3'>
                 {
-                    productData.map(product => <SingleCard key={product.id} product={product}></SingleCard>)
+                     filteredProducts.map(product => <SingleCard key={product.id} product={product}></SingleCard>)
                 }
             </div>
 
@@ -25,6 +42,7 @@ const Home = () => {
             <Form className="mt-0"></Form>
             </div>
         </div>
+        </>
     );
 };
 
